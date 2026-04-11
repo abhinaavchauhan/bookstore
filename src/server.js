@@ -25,7 +25,9 @@ const app = express();
 app.use(express.json());       // Parse JSON bodies
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
