@@ -97,4 +97,4 @@ node test_api.js
 ---
 
 ## 📄 License
-MIT License. Crafted with ❤️ by Abhinav Chauhan.
+Crafted with ❤️ by Abhinav Chauhan.
