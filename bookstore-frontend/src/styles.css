@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-sans antialiased text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300;
+    }
+}
+
+.glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-sm dark:bg-slate-900/80 dark:border-white/10;
+}
+
+.glass-dark {
+    @apply bg-slate-900/80 backdrop-blur-lg border border-white/10 shadow-lg;
+}
+
+.card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1 dark:hover:shadow-brand-900/20;
+}
+
+.btn-primary {
+    @apply bg-gradient-to-r from-brand-600 to-brand-500 text-white font-medium px-6 py-2.5 rounded-full shadow-lg shadow-brand-500/30 hover:shadow-brand-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all;
+}
+
+.input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all bg-white text-slate-900 placeholder:text-slate-400 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500 dark:focus:ring-brand-500/30;
+}
+
+.btn-primary-lg {
+    @apply bg-gradient-to-r from-brand-600 to-brand-500 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-brand-500/30 hover:shadow-brand-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all text-lg;
+}
+
+@layer utilities {
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+
+    .rotate-y-minus-12 {
+        transform: rotateY(-12deg);
+    }
+
+    .rotate-x-6 {
+        transform: rotateX(6deg);
+    }
+
+    .rotate-y-0 {
+        transform: rotateY(0deg);
+    }
+
+    .rotate-x-0 {
+        transform: rotateX(0deg);
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 dark:bg-slate-700 rounded-full hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors;
+}
+
+/* Hide Scrollbar but allow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Premium Animations */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+    animation: float 6s ease-in-out 3s infinite;
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+}

@@ -1,0 +1,235 @@
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 flex items-center gap-3">
+        Shopping Cart
+        <span id="itemCountBadge"
+            class="text-sm font-medium bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 px-3 py-1 rounded-full">0
+            items</span>
+    </h1>
+
+    <div id="emptyCart"
+        class="hidden text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+        <div class="bg-brand-50 dark:bg-slate-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Your cart is empty</h2>
+        <p class="text-slate-500 dark:text-slate-400 mb-8">Looks like you haven't added any books yet.</p>
+        <a href="/" class="btn-primary inline-flex items-center gap-2">
+            Start Shopping
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+            </svg>
+        </a>
+    </div>
+
+    <div id="cartContent" class="flex flex-col lg:flex-row gap-8 hidden">
+        <!-- Cart Items -->
+        <div class="lg:w-2/3">
+            <div
+                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
+                <div class="p-6 border-b border-slate-100 dark:border-slate-700">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Cart Items</h2>
+                </div>
+                <div id="cartItems" class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <!-- Items injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:w-1/3">
+            <div
+                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 sticky top-24 transition-colors">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Order Summary</h2>
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between text-slate-600 dark:text-slate-400">
+                        <span>Subtotal</span>
+                        <span id="subtotal" class="font-medium">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600 dark:text-slate-400">
+                        <span>Shipping</span>
+                        <span class="text-green-600 dark:text-green-400 font-medium">Free</span>
+                    </div>
+                    <div class="border-t border-slate-100 dark:border-slate-700 pt-4 flex justify-between items-center">
+                        <span class="text-lg font-bold text-slate-900 dark:text-white">Total</span>
+                        <span id="totalPrice" class="text-2xl font-bold text-brand-600 dark:text-brand-400">$0.00</span>
+                    </div>
+                </div>
+
+                <form id="checkoutForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Shipping
+                            Address</label>
+                        <input type="text" id="address" required placeholder="123 Main St, City, Country"
+                            class="input-field text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Payment
+                            Method</label>
+                        <select id="payment" class="input-field text-sm">
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="PayPal">PayPal</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full btn-primary justify-center py-3">
+                        Checkout Securely
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Existing script logic preserved
+    document.addEventListener('DOMContentLoaded', loadCart);
+
+    function getApiBase() {
+        return `http://${window.location.hostname}:5000/api`;
+    }
+
+    async function loadCart() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await axios.get(`${getApiBase()}/cart`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const cart = response.data.data;
+
+            const emptyCart = document.getElementById('emptyCart');
+            const cartContent = document.getElementById('cartContent');
+            const cartItems = document.getElementById('cartItems');
+            const itemCountBadge = document.getElementById('itemCountBadge');
+
+            if (!cart || cart.items.length === 0) {
+                emptyCart.classList.remove('hidden');
+                cartContent.classList.add('hidden');
+                itemCountBadge.textContent = '0 items';
+            } else {
+                emptyCart.classList.add('hidden');
+                cartContent.classList.remove('hidden');
+                itemCountBadge.textContent = `${cart.items.length} items`;
+
+                document.getElementById('subtotal').textContent = `$${cart.totalPrice}`;
+                document.getElementById('totalPrice').textContent = `$${cart.totalPrice}`;
+
+                cartItems.innerHTML = cart.items.map(item => `
+                    <div class="p-6 flex gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+                        <div class="relative w-24 h-36 flex-shrink-0 overflow-hidden rounded-md border border-slate-200 dark:border-slate-700">
+                             <img src="${item.book.coverImage && item.book.coverImage !== 'no-photo.jpg' ? item.book.coverImage : 'https://via.placeholder.com/100x150'}" 
+                                 alt="${item.book.title}" 
+                                 onerror="this.src='https://via.placeholder.com/100x150?text=No+Image'"
+                                 class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow flex flex-col justify-between py-1">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-900 dark:text-white line-clamp-1 mb-1">${item.book.title}</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-2 font-medium">by ${item.book.author}</p>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-100 dark:bg-brand-900 text-brand-800 dark:text-brand-200">
+                                    ${item.book.category || 'General'}
+                                </span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mt-4">
+                                <div class="flex items-center border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 shadow-sm">
+                                    <button onclick="updateQty('${item.book._id}', ${item.quantity - 1})" class="px-3 py-1.5 text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-l-lg transition-colors font-bold">-</button>
+                                    <span class="px-3 font-semibold text-slate-700 dark:text-slate-200 min-w-[2.5rem] text-center">${item.quantity}</span>
+                                    <button onclick="updateQty('${item.book._id}', ${item.quantity + 1})" class="px-3 py-1.5 text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-lg transition-colors font-bold">+</button>
+                                </div>
+                                <div class="flex flex-row sm:flex-col items-center sm:items-end gap-4 sm:gap-1 w-full sm:w-auto justify-between sm:justify-end">
+                                     <span class="font-bold text-lg text-slate-900 dark:text-white">$${(item.book.price * item.quantity).toFixed(2)}</span>
+                                     <button onclick="removeItem('${item.book._id}')" class="text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium hover:underline flex items-center gap-1 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        Remove
+                                     </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error(error);
+            // Handle 404 (cart not found/empty) gracefully
+            document.getElementById('emptyCart').classList.remove('hidden');
+            document.getElementById('cartContent').classList.add('hidden');
+        }
+    }
+
+    async function updateQty(bookId, quantity) {
+        if (quantity < 1) return;
+        const token = localStorage.getItem('token');
+        try {
+            await axios.put(`${getApiBase()}/cart`, { bookId, quantity }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            loadCart();
+            // Also update global count
+            if (typeof updateCartCount === 'function') updateCartCount();
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update cart');
+        }
+    }
+
+    async function removeItem(bookId) {
+        const token = localStorage.getItem('token');
+        if (!confirm('Are you sure you want to remove this item?')) return;
+
+        try {
+            await axios.delete(`${getApiBase()}/cart/${bookId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            loadCart();
+            // Also update global count
+            if (typeof updateCartCount === 'function') updateCartCount();
+        } catch (error) {
+            console.error(error);
+            alert('Failed to remove item');
+        }
+    }
+
+    document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const address = document.getElementById('address').value;
+        const payment = document.getElementById('payment').value;
+        const token = localStorage.getItem('token');
+
+        try {
+            await axios.post(`${getApiBase()}/orders`, {
+                shippingAddress: { address, city: 'Default', postalCode: '00000', country: 'Default' },
+                paymentMethod: payment
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // Show success styling
+            const container = document.querySelector('.max-w-4xl');
+            container.innerHTML = `
+                <div class="text-center py-24 px-4 animation-fade-in-up">
+                    <div class="w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-green-500/20">
+                        <svg class="w-12 h-12 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h2 class="text-4xl font-bold text-slate-900 dark:text-white mb-4">Order Confirmed!</h2>
+                    <p class="text-lg text-slate-500 dark:text-slate-400 mb-10 max-w-lg mx-auto">Thank you for your purchase. We've received your order and are preparing it for shipment.</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="/orders" class="px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-500/30 transition-all transform hover:-translate-y-1">Track Order</a>
+                        <a href="/" class="px-8 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">Continue Shopping</a>
+                    </div>
+                </div>
+            `;
+            // Reset global cart count
+            if (typeof updateCartCount === 'function') updateCartCount();
+        } catch (error) {
+            console.error(error);
+            alert('Checkout failed: ' + (error.response?.data?.message || 'Stock issue'));
+        }
+    });
+</script>
