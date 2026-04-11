@@ -28,7 +28,7 @@ const testAuth = async () => {
     try {
         const res = await axios.post(`${API_URL}/auth/login`, {
             email: 'admin@example.com', // Assuming an admin exists, or we register one
-            password: 'adminpassword'
+            password: 'password123'
         });
         // If admin doesn't exist, we'll handle it
         adminToken = res.data.token;

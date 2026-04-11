@@ -456,7 +456,7 @@
                             <span class="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">Price</span>
                             <span class="text-2xl font-bold text-slate-900 dark:text-white">$${book.price}</span>
                         </div>
-                        <button onclick="addToCart('${book._id}')" 
+                        <button onclick="addToCart('${book._id}', event)" 
                                 class="bg-brand-50 dark:bg-slate-700 text-brand-600 dark:text-brand-400 hover:bg-brand-600 dark:hover:bg-brand-500 hover:text-white dark:hover:text-white p-3 rounded-xl transition-all shadow-sm hover:shadow-brand-500/30 auth-visible disabled:opacity-50 disabled:cursor-not-allowed group/btn"
                                 ${book.stock <= 0 ? 'disabled' : ''}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform group-hover/btn:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -490,7 +490,7 @@
                 <p class="text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-1">By ${book.author}</p>
                 <div class="flex justify-between items-center mt-auto">
                     <span class="text-xl font-bold text-brand-600 dark:text-brand-400">$${book.price}</span>
-                    <button onclick="addToCart('${book._id}')" class="p-2 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white transition-colors auth-visible">
+                    <button onclick="addToCart('${book._id}', event)" class="p-2 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white transition-colors auth-visible">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     </button>
                 </div>
@@ -506,7 +506,7 @@
         loadBooks();
     }
 
-    async function addToCart(bookId) {
+    async function addToCart(bookId, event) {
         const token = localStorage.getItem('token');
         if (!token) {
             // Store return url
@@ -520,8 +520,12 @@
                 bookId,
                 quantity: 1
             }, {
-                headers: { Authorization: `Bearer \${token}` }
+                headers: { Authorization: `Bearer ${token}` }
             });
+            
+            // Update global cart count
+            if (typeof updateCartCount === 'function') updateCartCount();
+            
             // Show toast instead of alert ideally, but for now
             const btn = event.currentTarget || document.querySelector(`button[onclick*="${bookId}"]`);
             if (btn) {

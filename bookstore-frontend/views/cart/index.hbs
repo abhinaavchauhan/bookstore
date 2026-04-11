@@ -118,8 +118,8 @@
                 cartContent.classList.remove('hidden');
                 itemCountBadge.textContent = `${cart.items.length} items`;
 
-                document.getElementById('subtotal').textContent = `$${cart.totalPrice}`;
-                document.getElementById('totalPrice').textContent = `$${cart.totalPrice}`;
+                document.getElementById('subtotal').textContent = `$${cart.totalPrice.toFixed(2)}`;
+                document.getElementById('totalPrice').textContent = `$${cart.totalPrice.toFixed(2)}`;
 
                 cartItems.innerHTML = cart.items.map(item => `
                     <div class="p-6 flex gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
