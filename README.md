@@ -11,7 +11,7 @@ A high-end, full-stack E-commerce platform designed for a modern online bookstor
 
 ## 🎨 Visual Identity & UX
 The project prioritizes a premium user experience with:
-- **Glassmorphism Aesthetic**: Translucent navigation and cards for a modern, depth-focused look.
+- **Glassmorphism Aesthetic**: Translucent navigation and cards for a modern, depth-focused look. 
 - **Dynamic Dark Mode**: Seamlessly switches between high-contrast light and sleek dark themes.
 - **Smooth Animations**: Pulse effects, hover transitions, and staggered letter animations during loading.
 - **Responsive Mastery**: Tailored layouts for mobile, tablet, and desktop viewing.
